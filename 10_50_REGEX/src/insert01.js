@@ -20,7 +20,7 @@ db.graficas.insertMany([
     { nombre: "GTX 580", vram:[1, 2], ensambladora: "Zotac", fecha: new Date("2011, 8, 17"), precio: 500, tdp: 250},
     { nombre: "HD 6870", vram:[1, 2], ensambladora: "Asus", fecha: new Date("2010, 10, 21"), precio: 200, tdp: 150},
     { nombre: "GTX 285", vram:[1, 2], ensambladora: "Nvidia", fecha: new Date("2008, 12, 23"), precio: 200, tdp: 200},
-    { nombre: "GTX 770", vram:[2, 4], ensambladora: "Evga", fecha: new Date("2013, 6, 28"), precio: 500, tdp: 250},
+    { nombre: "GTX 770", vram:[2, 4], ensambladora: "MSI", fecha: new Date("2013, 6, 28"), precio: 500, tdp: 250},
     { nombre: "RTX 2080 Super", vram:[8, 12], ensambladora: "Nvidia", fecha: new Date("2019, 11, 22"), precio: 800, tdp: 250},
     { nombre: "R7 280", vram:[3, 6], ensambladora: "MSI", fecha: new Date("2015, 8, 17"), precio: 200, tdp: 200},
     { nombre: "GT 1030", vram:[1, 3], ensambladora: "Asus", fecha: new Date("2017, 5, 17"), precio: 120, tdp: 30},
@@ -35,5 +35,21 @@ db.graficas.insertMany([
  Atención: Los recursos utilizados en cada una de las siguientes Querys vendrán explicados en el documento pdf adjunto.
 
  */
-/* Con esta primera consulta nos mostrará aquellas gráficas que no cumplan ambas condiciones de tener un precio entre 150 y 300 euros y la de un tdp mayor o igual a 90*/
-db . graficas . find ({ $nor: [{  precio: {  $in: ["150","300"] }}, { tdp:{  $gte: 90} } ] } )
+    
+    /* Con esta primera consulta nos mostrará aquellas gráficas que no cumplan ambas condiciones de tener un precio entre 150 y 300 euros y la de un tdp mayor o igual a 90*/
+    db.graficas.find ({$nor:[{precio:{$in:["150","300"]}},{tdp:{$gte:90}}]}),
+
+    /* Filtra las gráficas cuya ensambladora no sea nvidia o que su vram no coincida con los valores 2 y 4 además de que su tdp debe estyar entre 100 y 300 */
+    db.graficas.find({ensambladora:{$ne:"Nvidia"},$or:[{vram:{$nin:[2, 4]}},{tdp:{$in:["100", "300"]}}]}),
+
+    /* En esta consulta se mostrarán aquellas gráficas cuya fecha de salida sea anterior al 17/05/2017 y además que su ensambladora sea MSI. */
+    db.graficas.find ({$and:[{fecha:{$lt:new Date("2017, 5, 17")}},{ ensambladora:{$eq:"MSI"}}]}),
+
+    /* En esta consulta se mostrarán aquellas gráficas cuyo nombre o no contenga los numeros "60" o bien que su precio sea menor o igual a 170 euros*/
+    db.graficas.find({$or:[{ nombre:{$regex:"60"}},{ precio:{$lte:170}}]}),
+
+    /* En esta consulta se mostrarán aquellas gráficas cuyo precio sea mayor a 300, y aquellas o que cuya fecha de salida sea anterior a 2011 o bien su tdp se encuentre entre 100 y 220*/ 
+    db.graficas.find({precio:{$not:{$lt:300}},$or:[{fecha:{$gt:new Date("2011, 12, 17")}},{tdp:{$in:["100", "220"]}}]})
+
+    
+
